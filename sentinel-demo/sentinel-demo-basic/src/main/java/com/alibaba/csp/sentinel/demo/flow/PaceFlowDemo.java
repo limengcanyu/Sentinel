@@ -30,6 +30,14 @@ import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
 
 /**
+ * 基于QPS/并发数的流量控制
+ *
+ * 2.2 QPS流量控制
+ * 当 QPS 超过某个阈值的时候，则采取措施进行流量控制。流量控制的手段包括下面 3 种，对应 FlowRule 中的 controlBehavior 字段：
+ *
+ * 3. 匀速器（RuleConstant.CONTROL_BEHAVIOR_RATE_LIMITER）方式。这种方式严格控制了请求通过的间隔时间，也即是让请求以均匀的速度通过，对应的是漏桶算法。
+ * 具体的例子参见 PaceFlowDemo。
+ *
  * <p>
  * If {@link RuleConstant#CONTROL_BEHAVIOR_RATE_LIMITER} is set, incoming
  * requests are passing at regular interval. When a new request arrives, the

@@ -32,6 +32,14 @@ public class DemoController {
     @Autowired
     private TestService service;
 
+    /**
+     * localhost:19966/foo?t=-1 启用资源保护
+     * localhost:19966/foo?t=0 未启用资源保护
+     *
+     * @param t
+     * @return
+     * @throws Exception
+     */
     @GetMapping("/foo")
     public String apiFoo(@RequestParam(required = false) Long t) throws Exception {
         if (t == null) {

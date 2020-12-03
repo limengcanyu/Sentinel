@@ -30,6 +30,11 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class WebMvcTestController {
 
+    /**
+     * localhost:8080/hello
+     *
+     * @return
+     */
     @GetMapping("/hello")
     @ResponseBody
     public String apiHello() {
@@ -37,6 +42,11 @@ public class WebMvcTestController {
         return "Hello!";
     }
 
+    /**
+     * localhost:8080/err
+     *
+     * @return
+     */
     @GetMapping("/err")
     @ResponseBody
     public String apiError() {
@@ -44,6 +54,11 @@ public class WebMvcTestController {
         return "Oops...";
     }
 
+    /**
+     * localhost:8080/foo/1
+     *
+     * @return
+     */
     @GetMapping("/foo/{id}")
     @ResponseBody
     public String apiFoo(@PathVariable("id") Long id) {
@@ -51,13 +66,23 @@ public class WebMvcTestController {
         return "Hello " + id;
     }
 
+    /**
+     * localhost:8080/exclude/2
+     *
+     * @return
+     */
     @GetMapping("/exclude/{id}")
     @ResponseBody
     public String apiExclude(@PathVariable("id") Long id) {
         doBusiness();
         return "Exclude " + id;
     }
-    
+
+    /**
+     * localhost:8080/forward
+     *
+     * @return
+     */
     @GetMapping("/forward")
     public ModelAndView apiForward() {
         ModelAndView mav = new ModelAndView();

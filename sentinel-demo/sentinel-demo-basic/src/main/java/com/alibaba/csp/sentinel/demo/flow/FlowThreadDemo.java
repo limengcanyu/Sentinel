@@ -29,6 +29,14 @@ import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
 
 /**
+ * 2.1 并发线程数流量控制
+ * 线程数限流用于保护业务线程数不被耗尽。例如，当应用所依赖的下游应用由于某种原因导致服务不稳定、响应延迟增加，
+ * 对于调用者来说，意味着吞吐量下降和更多的线程数占用，极端情况下甚至导致线程池耗尽。为应对高线程占用的情况，
+ * 业内有使用隔离的方案，比如通过不同业务逻辑使用不同线程池来隔离业务自身之间的资源争抢（线程池隔离），
+ * 或者使用信号量来控制同时请求的个数（信号量隔离）。这种隔离方案虽然能够控制线程数量，但无法控制请求排队时间。
+ * 当请求过多时排队也是无益的，直接拒绝能够迅速降低系统压力。Sentinel线程数限流不负责创建和管理线程池，
+ * 而是简单统计当前请求上下文的线程个数，如果超出阈值，新的请求会被立即拒绝。
+ *
  * @author jialiang.linjl
  */
 public class FlowThreadDemo {
@@ -59,11 +67,14 @@ public class FlowThreadDemo {
                         Entry methodA = null;
                         try {
                             TimeUnit.MILLISECONDS.sleep(5);
+
                             methodA = SphU.entry("methodA");
                             activeThread.incrementAndGet();
+
                             Entry methodB = SphU.entry("methodB");
                             TimeUnit.MILLISECONDS.sleep(methodBRunningTime);
                             methodB.exit();
+
                             pass.addAndGet(1);
                         } catch (BlockException e1) {
                             block.incrementAndGet();
@@ -131,8 +142,8 @@ public class FlowThreadDemo {
                 long oneSecondBlock = globalBlock - oldBlock;
                 oldBlock = globalBlock;
 
-                System.out.println(seconds + " total qps is: " + oneSecondTotal);
-                System.out.println(TimeUtil.currentTimeMillis() + ", total:" + oneSecondTotal
+                System.out.print(seconds + " total qps is: " + oneSecondTotal);
+                System.out.println(", currentTimeMillis" + TimeUtil.currentTimeMillis() + ", total:" + oneSecondTotal
                     + ", pass:" + oneSecondPass
                     + ", block:" + oneSecondBlock
                     + " activeThread:" + activeThread.get());
@@ -146,8 +157,8 @@ public class FlowThreadDemo {
             }
 
             long cost = System.currentTimeMillis() - start;
-            System.out.println("time cost: " + cost + " ms");
-            System.out.println("total:" + total.get() + ", pass:" + pass.get()
+            System.out.print("time cost: " + cost + " ms");
+            System.out.println(", total:" + total.get() + ", pass:" + pass.get()
                 + ", block:" + block.get());
             System.exit(0);
         }
